@@ -658,6 +658,8 @@ body {
   <input type="color" class="tb-color-input" id="tb-highlight-color" value="#FFFF00" title="Highlight color">
   <button class="tb-btn" data-action="highlight" title="Apply highlight">🖍</button>
   <button class="tb-btn" data-action="removeHighlight" title="Remove highlight">✕</button>
+  <div class="tb-separator"></div>
+  <button class="tb-btn" id="btn-make-anchor" title="Make Nav Button (from selection)">📌</button>
 </div>
 
 <!-- ============================================
@@ -796,6 +798,7 @@ let state = {
 let autosaveTimer = null;
 let editingObjectionId = null;
 let deletingObjectionId = null;
+let isCreatingAnchor = false;
 
 /* ==============================================================
    DOM REFERENCES
@@ -1145,6 +1148,23 @@ document.querySelector('[data-action="removeHighlight"]').addEventListener('mous
   debouncedSave();
 });
 
+document.getElementById('btn-make-anchor').addEventListener('mousedown', (e) => {
+  e.preventDefault();
+  saveSelection();
+  const text = window.getSelection().toString().trim();
+  
+  isCreatingAnchor = true;
+  editingObjectionId = null;
+  $modalTitle.textContent = 'Add Nav Button';
+  $modalName.value = text;
+  $modalEmoji.value = '📌'; 
+  $modalColor.value = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+  $modalOverlay.classList.add('visible');
+  
+  $toolbar.classList.remove('visible');
+  setTimeout(() => $modalName.focus(), 100);
+});
+
 // Text color
 document.getElementById('tb-text-color').addEventListener('input', (e) => {
   restoreSelection();
@@ -1320,6 +1340,7 @@ function renderManageList() {
 
 document.getElementById('btn-add-objection').addEventListener('click', () => {
   editingObjectionId = null;
+  isCreatingAnchor = false;
   $modalTitle.textContent = 'Add New Objection';
   $modalName.value = '';
   $modalEmoji.value = '';
@@ -1370,20 +1391,40 @@ document.getElementById('modal-save').addEventListener('click', () => {
   } else {
     // Create new
     const id = 'custom-' + Date.now();
-    state.objections.push({ id, label, emoji, color });
     
-    // Create empty objection section in the script
-    const sectionHtml = `
-      <div class="script-line empty-line"><br></div>
-      <div class="script-line objection-section-header" data-objection="${id}" id="objection-${id}" style="border-left-color: ${color} !important; background: ${hexToLightBg(color)} !important;">
-        <b>${emoji ? emoji + ' ' : ''}${label}:</b>
-      </div>
-      <div class="script-line empty-line"><br></div>
-      <div class="script-line">[Type your objection response here]</div>
-      <div class="script-line empty-line"><br></div>
-    `;
-    
-    $content.innerHTML += sectionHtml;
+    if (isCreatingAnchor) {
+      // Inline anchor
+      state.objections.push({ id, label, emoji, color, isInline: true });
+      restoreSelection();
+      if (savedSelection) {
+        const span = document.createElement('span');
+        span.id = 'objection-' + id;
+        span.dataset.objection = id;
+        try {
+          savedSelection.surroundContents(span);
+        } catch(e) {
+          // Fallback if crossing boundaries: just insert empty anchor at start
+          const startSpan = document.createElement('span');
+          startSpan.id = 'objection-' + id;
+          startSpan.dataset.objection = id;
+          savedSelection.insertNode(startSpan);
+        }
+      }
+    } else {
+      // Normal objection section
+      state.objections.push({ id, label, emoji, color });
+      
+      const sectionHtml = `
+        <div class="script-line empty-line"><br></div>
+        <div class="script-line objection-section-header" data-objection="${id}" id="objection-${id}" style="border-left-color: ${color} !important; background: ${hexToLightBg(color)} !important;">
+          <b>${emoji ? emoji + ' ' : ''}${label}:</b>
+        </div>
+        <div class="script-line empty-line"><br></div>
+        <div class="script-line">[Type your objection response here]</div>
+        <div class="script-line empty-line"><br></div>
+      `;
+      $content.innerHTML += sectionHtml;
+    }
   }
   
   $modalOverlay.classList.remove('visible');
@@ -1441,7 +1482,15 @@ document.getElementById('delete-confirm').addEventListener('click', () => {
   // Remove the section from the script
   const section = document.getElementById('objection-' + deletingObjectionId);
   if (section) {
-    section.remove();
+    if (section.tagName === 'SPAN') {
+      const parent = section.parentNode;
+      while (section.firstChild) {
+        parent.insertBefore(section.firstChild, section);
+      }
+      parent.removeChild(section);
+    } else {
+      section.remove();
+    }
   }
   
   $deleteOverlay.classList.remove('visible');
