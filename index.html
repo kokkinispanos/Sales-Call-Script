@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Call Script</title>
+<meta name="description" content="Live sales call script with instant objection navigation">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   CSS VARIABLES & RESET
+   ============================================ */
+:root {
+  --font-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-base: 17px;
+  --line-height: 1.75;
+  --max-width: 780px;
+  --nav-height: auto;
+  --color-bg: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-muted: #666;
+  --color-border: #e5e5e5;
+  --color-nav-bg: rgba(248, 249, 250, 0.92);
+  --color-highlight-flash: rgba(255, 235, 59, 0.35);
+  --color-section-header: #FFF3CD;
+  --color-objection-header: #f0f0f0;
+  /* Objection button colors */
+  --obj-think: #6366f1;
+  --obj-scammed: #ef4444;
+  --obj-afford: #f59e0b;
+  --obj-expensive: #ec4899;
+  --obj-parents: #8b5cf6;
+  --obj-time: #14b8a6;
+  --obj-big: #f97316;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 140px;
+}
+
+body {
+  font-family: var(--font-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================
+   STICKY NAVIGATION BAR
+   ============================================ */
+#nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--color-nav-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  padding: 8px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+#nav-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+
+#nav-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+#nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#save-status {
+  font-size: 12px;
+  color: #999;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+#save-status.saving { color: #f59e0b; }
+#save-status.saved { color: #22c55e; }
+#save-status.error { color: #ef4444; }
+
+.nav-icon-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: all 0.15s;
+  color: var(--color-text);
+}
+
+.nav-icon-btn:hover {
+  background: #f0f0f0;
+  border-color: #ccc;
+}
+
+.nav-icon-btn:active { transform: scale(0.95); }
+
+#nav-buttons-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.obj-btn {
+  padding: 5px 12px;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-base);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  position: relative;
+  user-select: none;
+}
+
+.obj-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.obj-btn:active { transform: translateY(0); }
+
+.obj-btn .shortcut-hint {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-left: 4px;
+}
+
+#back-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: white;
+  font-family: var(--font-base);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+#back-btn.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#back-btn.active:hover {
+  background: #f0f0f0;
+  border-color: #ccc;
+}
+
+/* ============================================
+   SCRIPT CONTENT AREA
+   ============================================ */
+#script-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 130px 24px 120px;
+  min-height: 100vh;
+}
+
+#script-content {
+  outline: none;
+  cursor: text;
+}
+
+#script-content .script-line {
+  padding: 1px 4px;
+  border-radius: 2px;
+  min-height: 1em;
+}
+
+#script-content .empty-line {
+  min-height: 0.8em;
+}
+
+#script-content .section-header {
+  background: var(--color-section-header);
+  font-weight: 700;
+  padding: 4px 8px;
+  margin: 8px 0 4px;
+  border-radius: 4px;
+  font-size: 1.05em;
+}
+
+#script-content .objection-section-header {
+  font-weight: 700;
+  padding: 6px 8px 6px 16px;
+  margin: 12px 0 4px;
+  border-radius: 4px;
+  font-size: 1.05em;
+  border-left: 5px solid #999;
+  background: var(--color-objection-header);
+}
+
+/* Objection section colored left borders */
+[data-objection="think-about-it"] { border-left-color: var(--obj-think) !important; background: #eef2ff !important; }
+[data-objection="scammed-before"] { border-left-color: var(--obj-scammed) !important; background: #fef2f2 !important; }
+[data-objection="cant-afford-it"] { border-left-color: var(--obj-afford) !important; background: #fffbeb !important; }
+[data-objection="too-expensive"] { border-left-color: var(--obj-expensive) !important; background: #fdf2f8 !important; }
+[data-objection="parents"] { border-left-color: var(--obj-parents) !important; background: #f5f3ff !important; }
+[data-objection="need-time"] { border-left-color: var(--obj-time) !important; background: #f0fdfa !important; }
+[data-objection="big-decision"] { border-left-color: var(--obj-big) !important; background: #fff7ed !important; }
+
+/* Flash highlight animation */
+@keyframes flash-highlight {
+  0% { box-shadow: 0 0 0 4px rgba(255, 200, 0, 0.6); }
+  50% { box-shadow: 0 0 0 8px rgba(255, 200, 0, 0.3); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 200, 0, 0); }
+}
+
+.flash-highlight {
+  animation: flash-highlight 1.2s ease-out;
+}
+
+/* ============================================
+   FLOATING TEXT TOOLBAR
+   ============================================ */
+#text-toolbar {
+  position: absolute;
+  display: none;
+  z-index: 2000;
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  gap: 2px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+#text-toolbar.visible {
+  display: flex;
+}
+
+#text-toolbar button, #text-toolbar select, #text-toolbar input {
+  font-family: var(--font-base);
+}
+
+.tb-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s;
+}
+
+.tb-btn:hover { background: rgba(255,255,255,0.15); }
+.tb-btn.active { background: rgba(255,255,255,0.25); }
+
+.tb-separator {
+  width: 1px;
+  height: 20px;
+  background: rgba(255,255,255,0.2);
+  margin: 0 3px;
+}
+
+.tb-font-size {
+  width: 45px;
+  height: 28px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 4px;
+  color: white;
+  text-align: center;
+  font-size: 12px;
+  outline: none;
+}
+
+.tb-font-size:focus { border-color: rgba(255,255,255,0.5); }
+
+.tb-color-input {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.tb-color-input::-webkit-color-swatch-wrapper { padding: 2px; }
+.tb-color-input::-webkit-color-swatch { border-radius: 4px; border: 1px solid rgba(255,255,255,0.3); }
+
+/* ============================================
+   MODALS & OVERLAYS
+   ============================================ */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 3000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+
+.modal-overlay.visible {
+  display: flex;
+}
+
+.modal-box {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+}
+
+.modal-box h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: var(--color-text);
+}
+
+.modal-box label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+  margin-top: 12px;
+}
+
+.modal-box label:first-of-type { margin-top: 0; }
+
+.modal-box input[type="text"] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: var(--font-base);
+  font-size: 14px;
+  outline: none;
+}
+
+.modal-box input[type="text"]:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+
+.modal-box input[type="color"] {
+  width: 50px;
+  height: 36px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-family: var(--font-base);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-cancel {
+  border: 1px solid var(--color-border);
+  background: white;
+  color: var(--color-text);
+}
+
+.btn-cancel:hover { background: #f5f5f5; }
+
+.btn-primary {
+  border: none;
+  background: #6366f1;
+  color: white;
+}
+
+.btn-primary:hover { background: #4f46e5; }
+
+.btn-danger {
+  border: none;
+  background: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover { background: #dc2626; }
+
+/* ============================================
+   SETTINGS PANEL
+   ============================================ */
+#settings-panel {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 300px;
+  height: 100vh;
+  background: white;
+  border-left: 1px solid var(--color-border);
+  z-index: 2500;
+  padding: 24px;
+  transition: right 0.25s ease;
+  overflow-y: auto;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.08);
+}
+
+#settings-panel.open { right: 0; }
+
+#settings-panel h3 {
+  font-size: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.setting-group {
+  margin-bottom: 20px;
+}
+
+.setting-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+
+.setting-group input[type="range"] {
+  width: 100%;
+  accent-color: #6366f1;
+}
+
+.setting-group .range-value {
+  font-size: 13px;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.export-btn {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: white;
+  font-family: var(--font-base);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.export-btn:hover { background: #f5f5f5; border-color: #ccc; }
+
+/* ============================================
+   MANAGE BUTTONS PANEL
+   ============================================ */
+#manage-panel {
+  position: fixed;
+  top: 0;
+  right: -380px;
+  width: 360px;
+  height: 100vh;
+  background: white;
+  border-left: 1px solid var(--color-border);
+  z-index: 2500;
+  padding: 24px;
+  transition: right 0.25s ease;
+  overflow-y: auto;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.08);
+}
+
+#manage-panel.open { right: 0; }
+
+#manage-panel h3 {
+  font-size: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.manage-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  background: #fafafa;
+}
+
+.manage-item .color-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.manage-item .item-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.manage-item button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-border);
+  background: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+
+.manage-item button:hover { background: #eee; }
+
+.add-btn-container {
+  margin-top: 12px;
+}
+
+.add-btn-container button {
+  width: 100%;
+  padding: 10px;
+  border: 2px dashed var(--color-border);
+  border-radius: 8px;
+  background: transparent;
+  font-family: var(--font-base);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.add-btn-container button:hover {
+  border-color: #6366f1;
+  color: #6366f1;
+  background: #f5f3ff;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 640px) {
+  #script-container { padding: 120px 12px 80px; }
+  .obj-btn { padding: 4px 8px; font-size: 11px; }
+  #nav-bar { padding: 6px 10px; }
+  .obj-btn .shortcut-hint { display: none; }
+}
+
+/* Print styles */
+@media print {
+  #nav-bar, #text-toolbar, #settings-panel, #manage-panel { display: none !important; }
+  #script-container { padding: 20px; max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     NAVIGATION BAR
+     ============================================ -->
+<div id="nav-bar">
+  <div id="nav-top-row">
+    <span id="nav-title">📋 SALES SCRIPT</span>
+    <div id="nav-controls">
+      <span id="save-status" class="saved">Saved ✓</span>
+      <button class="nav-icon-btn" id="btn-manage" title="Manage Objection Buttons">⚙</button>
+      <button class="nav-icon-btn" id="btn-settings" title="Settings & Export">☰</button>
+    </div>
+  </div>
+  <div id="nav-buttons-row">
+    <!-- Objection buttons rendered by JS -->
+    <button id="back-btn" title="Return to previous position (Esc)">↩ Back</button>
+  </div>
+</div>
+
+<!-- ============================================
+     SCRIPT CONTENT
+     ============================================ -->
+<div id="script-container">
+  <div id="script-content" contenteditable="true" spellcheck="false">
+    <!-- Content loaded by JS -->
+  </div>
+</div>
+
+<!-- ============================================
+     FLOATING TEXT TOOLBAR
+     ============================================ -->
+<div id="text-toolbar">
+  <button class="tb-btn" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+  <button class="tb-btn" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+  <button class="tb-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+  <button class="tb-btn" data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+  <div class="tb-separator"></div>
+  <button class="tb-btn" data-action="fontSize-down" title="Decrease font size">A↓</button>
+  <input type="text" class="tb-font-size" id="tb-font-input" value="17" title="Font size in px">
+  <button class="tb-btn" data-action="fontSize-up" title="Increase font size">A↑</button>
+  <div class="tb-separator"></div>
+  <input type="color" class="tb-color-input" id="tb-text-color" value="#1a1a1a" title="Text color">
+  <input type="color" class="tb-color-input" id="tb-highlight-color" value="#FFFF00" title="Highlight color">
+  <button class="tb-btn" data-action="highlight" title="Apply highlight">🖍</button>
+  <button class="tb-btn" data-action="removeHighlight" title="Remove highlight">✕</button>
+</div>
+
+<!-- ============================================
+     SETTINGS PANEL
+     ============================================ -->
+<div id="settings-panel">
+  <h3>Settings <button class="nav-icon-btn" id="close-settings">✕</button></h3>
+  
+  <div class="setting-group">
+    <label>Global Font Size: <span class="range-value" id="global-font-value">17px</span></label>
+    <input type="range" id="global-font-range" min="12" max="28" value="17" step="1">
+  </div>
+  
+  <div class="setting-group">
+    <label>Line Height: <span class="range-value" id="line-height-value">1.75</span></label>
+    <input type="range" id="line-height-range" min="1.2" max="2.5" value="1.75" step="0.05">
+  </div>
+  
+  <div class="setting-group">
+    <label>Document Width: <span class="range-value" id="width-value">780px</span></label>
+    <input type="range" id="width-range" min="500" max="1200" value="780" step="20">
+  </div>
+
+  <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e5e5;">
+  
+  <h4 style="font-size:14px; margin-bottom:8px;">Data Backup</h4>
+  <button class="export-btn" id="btn-export-json">📥 Export as JSON</button>
+  <button class="export-btn" id="btn-import-json">📤 Import from JSON</button>
+  <input type="file" id="import-file-input" accept=".json" style="display:none;">
+  
+  <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e5e5;">
+  
+  <button class="export-btn" id="btn-reset" style="color:#ef4444; border-color:#fca5a5;">⚠ Reset to Original Script</button>
+</div>
+
+<!-- ============================================
+     MANAGE BUTTONS PANEL
+     ============================================ -->
+<div id="manage-panel">
+  <h3>Objection Buttons <button class="nav-icon-btn" id="close-manage">✕</button></h3>
+  <p style="font-size:12px; color:#999; margin-bottom:12px;">Drag items to reorder. Click icons to edit, change color, or delete.</p>
+  <div id="manage-list">
+    <!-- Rendered by JS -->
+  </div>
+  <div class="add-btn-container">
+    <button id="btn-add-objection">+ Add New Objection</button>
+  </div>
+</div>
+
+<!-- ============================================
+     ADD/EDIT MODAL
+     ============================================ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box" id="modal-box">
+    <h3 id="modal-title">Add Objection</h3>
+    <label for="modal-name">Button Label</label>
+    <input type="text" id="modal-name" placeholder="e.g. 'Too Busy'">
+    <label for="modal-emoji">Emoji (optional)</label>
+    <input type="text" id="modal-emoji" placeholder="e.g. ⏰" maxlength="4">
+    <label for="modal-color">Button Color</label>
+    <input type="color" id="modal-color" value="#6366f1">
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modal-cancel">Cancel</button>
+      <button class="btn-primary" id="modal-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     CONFIRM DELETE MODAL
+     ============================================ -->
+<div class="modal-overlay" id="delete-overlay">
+  <div class="modal-box">
+    <h3>Delete Objection</h3>
+    <p id="delete-msg" style="font-size:14px; color:#666; margin-bottom:4px;">Are you sure you want to delete this objection button?</p>
+    <p style="font-size:12px; color:#ef4444;">⚠ The objection section content in the script will also be removed.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="delete-cancel">Cancel</button>
+      <button class="btn-danger" id="delete-confirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ==============================================================
+   SCRIPT VAR - embedded default content
+   ============================================================== */
+</script>
+<script src="script_var.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAZtTmfT-I3T-UQEnpO89xjnO-hh3mf9-c",
+  authDomain: "sales-call-script.firebaseapp.com",
+  projectId: "sales-call-script",
+  storageBucket: "sales-call-script.firebasestorage.app",
+  messagingSenderId: "1027472660530",
+  appId: "1:1027472660530:web:f3011cd173ce1447c0042b",
+  measurementId: "G-HH52E6RGD8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* ==============================================================
+   APP STATE
+   ============================================================== */
+
+const STORAGE_KEY = 'sales-script-app-v1';
+const AUTOSAVE_DELAY = 800; // ms
+
+// Default objection button configs
+const DEFAULT_OBJECTIONS = [
+  { id: 'think-about-it', label: 'Think About It', emoji: '🤔', color: '#6366f1' },
+  { id: 'scammed-before', label: 'Scammed Before', emoji: '⚠️', color: '#ef4444' },
+  { id: 'cant-afford-it', label: "Can't Afford It", emoji: '💰', color: '#f59e0b' },
+  { id: 'too-expensive', label: 'Too Expensive', emoji: '💸', color: '#ec4899' },
+  { id: 'parents', label: 'Parents', emoji: '👨‍👩‍👦', color: '#8b5cf6' },
+  { id: 'need-time', label: 'Need Time', emoji: '⏰', color: '#14b8a6' },
+  { id: 'big-decision', label: 'Big Decision', emoji: '😬', color: '#f97316' },
+];
+
+let state = {
+  objections: JSON.parse(JSON.stringify(DEFAULT_OBJECTIONS)),
+  scrollHistory: [],
+  settings: {
+    fontSize: 17,
+    lineHeight: 1.75,
+    docWidth: 780,
+  },
+};
+
+let autosaveTimer = null;
+let editingObjectionId = null;
+let deletingObjectionId = null;
+
+/* ==============================================================
+   DOM REFERENCES
+   ============================================================== */
+const $content = document.getElementById('script-content');
+const $navButtonsRow = document.getElementById('nav-buttons-row');
+const $backBtn = document.getElementById('back-btn');
+const $toolbar = document.getElementById('text-toolbar');
+const $saveStatus = document.getElementById('save-status');
+const $settingsPanel = document.getElementById('settings-panel');
+const $managePanel = document.getElementById('manage-panel');
+const $manageList = document.getElementById('manage-list');
+const $modalOverlay = document.getElementById('modal-overlay');
+const $modalTitle = document.getElementById('modal-title');
+const $modalName = document.getElementById('modal-name');
+const $modalEmoji = document.getElementById('modal-emoji');
+const $modalColor = document.getElementById('modal-color');
+const $deleteOverlay = document.getElementById('delete-overlay');
+const $deleteMsg = document.getElementById('delete-msg');
+
+/* ==============================================================
+   LOAD / SAVE
+   ============================================================== */
+
+async function loadState() {
+  try {
+    let saved = null;
+    
+    // 1. Try to load from Firebase first
+    try {
+      const docRef = doc(db, "scripts", "main");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        saved = docSnap.data();
+        console.log("Loaded data from Firebase.");
+      }
+    } catch (firebaseErr) {
+      console.warn("Failed to load from Firebase, checking local storage:", firebaseErr);
+    }
+    
+    // 2. Fallback to localStorage if Firebase is empty or failed
+    if (!saved) {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        saved = JSON.parse(raw);
+        console.log("Loaded fallback data from local storage.");
+      }
+    }
+
+    if (saved) {
+      if (saved.objections) state.objections = saved.objections;
+      if (saved.settings) Object.assign(state.settings, saved.settings);
+      if (saved.scriptContent) {
+        $content.innerHTML = saved.scriptContent;
+      } else {
+        $content.innerHTML = DEFAULT_SCRIPT_CONTENT;
+      }
+    } else {
+      $content.innerHTML = DEFAULT_SCRIPT_CONTENT;
+    }
+  } catch (e) {
+    console.error('Load error:', e);
+    $content.innerHTML = DEFAULT_SCRIPT_CONTENT;
+  }
+  applySettings();
+}
+
+async function saveState() {
+  try {
+    $saveStatus.textContent = 'Saving...';
+    $saveStatus.className = 'saving';
+    
+    const data = {
+      objections: state.objections,
+      settings: state.settings,
+      scriptContent: $content.innerHTML,
+      savedAt: new Date().toISOString(),
+    };
+    
+    // Save to localStorage as backup
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    
+    // Save to Firebase
+    try {
+      await setDoc(doc(db, "scripts", "main"), data);
+      $saveStatus.textContent = 'Saved ✓';
+      $saveStatus.className = 'saved';
+    } catch (firebaseErr) {
+      console.error('Firebase Save error:', firebaseErr);
+      $saveStatus.textContent = 'Local save only';
+      $saveStatus.className = 'error'; 
+    }
+  } catch (e) {
+    console.error('Save error:', e);
+    $saveStatus.textContent = 'Error!';
+    $saveStatus.className = 'error';
+  }
+}
+
+function debouncedSave() {
+  clearTimeout(autosaveTimer);
+  $saveStatus.textContent = 'Saving...';
+  $saveStatus.className = 'saving';
+  autosaveTimer = setTimeout(saveState, AUTOSAVE_DELAY);
+}
+
+/* ==============================================================
+   SETTINGS
+   ============================================================== */
+
+function applySettings() {
+  document.documentElement.style.setProperty('--font-size-base', state.settings.fontSize + 'px');
+  document.documentElement.style.setProperty('--line-height', state.settings.lineHeight);
+  document.documentElement.style.setProperty('--max-width', state.settings.docWidth + 'px');
+  
+  document.getElementById('global-font-range').value = state.settings.fontSize;
+  document.getElementById('global-font-value').textContent = state.settings.fontSize + 'px';
+  document.getElementById('line-height-range').value = state.settings.lineHeight;
+  document.getElementById('line-height-value').textContent = state.settings.lineHeight.toFixed(2);
+  document.getElementById('width-range').value = state.settings.docWidth;
+  document.getElementById('width-value').textContent = state.settings.docWidth + 'px';
+}
+
+document.getElementById('global-font-range').addEventListener('input', (e) => {
+  state.settings.fontSize = parseInt(e.target.value);
+  applySettings();
+  debouncedSave();
+});
+
+document.getElementById('line-height-range').addEventListener('input', (e) => {
+  state.settings.lineHeight = parseFloat(e.target.value);
+  applySettings();
+  debouncedSave();
+});
+
+document.getElementById('width-range').addEventListener('input', (e) => {
+  state.settings.docWidth = parseInt(e.target.value);
+  applySettings();
+  debouncedSave();
+});
+
+/* ==============================================================
+   OBJECTION BUTTONS RENDERING
+   ============================================================== */
+
+function renderNavButtons() {
+  // Remove all objection buttons (keep back button)
+  const existing = $navButtonsRow.querySelectorAll('.obj-btn');
+  existing.forEach(b => b.remove());
+  
+  state.objections.forEach((obj, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'obj-btn';
+    btn.style.backgroundColor = obj.color;
+    btn.dataset.objectionId = obj.id;
+    btn.innerHTML = `${obj.emoji || ''} ${obj.label}<span class="shortcut-hint">[${i + 1}]</span>`;
+    btn.title = `Jump to "${obj.label}" (Key: ${i + 1})`;
+    btn.addEventListener('click', () => jumpToObjection(obj.id));
+    $navButtonsRow.insertBefore(btn, $backBtn);
+  });
+}
+
+/* ==============================================================
+   SCROLL / JUMP LOGIC
+   ============================================================== */
+
+function jumpToObjection(id) {
+  // Save current scroll position
+  state.scrollHistory.push(window.scrollY);
+  $backBtn.classList.add('active');
+  
+  // Find the target element
+  const target = document.getElementById('objection-' + id);
+  if (!target) {
+    console.warn('Objection section not found:', id);
+    return;
+  }
+  
+  // Scroll to it
+  const navHeight = document.getElementById('nav-bar').offsetHeight;
+  const targetTop = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+  
+  window.scrollTo({ top: targetTop, behavior: 'smooth' });
+  
+  // Flash highlight
+  target.classList.remove('flash-highlight');
+  void target.offsetWidth; // force reflow
+  target.classList.add('flash-highlight');
+  
+  setTimeout(() => target.classList.remove('flash-highlight'), 1500);
+}
+
+function goBack() {
+  if (state.scrollHistory.length === 0) return;
+  
+  const pos = state.scrollHistory.pop();
+  window.scrollTo({ top: pos, behavior: 'smooth' });
+  
+  if (state.scrollHistory.length === 0) {
+    $backBtn.classList.remove('active');
+  }
+}
+
+$backBtn.addEventListener('click', goBack);
+
+/* ==============================================================
+   TEXT TOOLBAR
+   ============================================================== */
+
+let savedSelection = null;
+
+function saveSelection() {
+  const sel = window.getSelection();
+  if (sel.rangeCount > 0) {
+    savedSelection = sel.getRangeAt(0).cloneRange();
+  }
+}
+
+function restoreSelection() {
+  if (savedSelection) {
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedSelection);
+  }
+}
+
+function showToolbar() {
+  const sel = window.getSelection();
+  if (sel.isCollapsed || sel.rangeCount === 0) {
+    $toolbar.classList.remove('visible');
+    return;
+  }
+  
+  // Check if selection is within the content area
+  const range = sel.getRangeAt(0);
+  if (!$content.contains(range.commonAncestorContainer)) {
+    $toolbar.classList.remove('visible');
+    return;
+  }
+  
+  const rect = range.getBoundingClientRect();
+  const toolbarWidth = 460;
+  
+  let left = rect.left + (rect.width / 2) - (toolbarWidth / 2);
+  left = Math.max(8, Math.min(left, window.innerWidth - toolbarWidth - 8));
+  
+  let top = rect.top - 48;
+  if (top < 8) top = rect.bottom + 8;
+  
+  $toolbar.style.top = (top + window.scrollY) + 'px';
+  $toolbar.style.left = left + 'px';
+  $toolbar.classList.add('visible');
+  
+  // Update active states
+  updateToolbarStates();
+}
+
+function updateToolbarStates() {
+  document.querySelectorAll('.tb-btn[data-cmd]').forEach(btn => {
+    const cmd = btn.dataset.cmd;
+    btn.classList.toggle('active', document.queryCommandState(cmd));
+  });
+}
+
+function hideToolbar() {
+  setTimeout(() => {
+    const sel = window.getSelection();
+    if (sel.isCollapsed) {
+      $toolbar.classList.remove('visible');
+    }
+  }, 150);
+}
+
+// Toolbar command buttons
+document.querySelectorAll('.tb-btn[data-cmd]').forEach(btn => {
+  btn.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    document.execCommand(btn.dataset.cmd, false, null);
+    updateToolbarStates();
+    debouncedSave();
+  });
+});
+
+// Font size buttons
+document.querySelector('[data-action="fontSize-up"]').addEventListener('mousedown', (e) => {
+  e.preventDefault();
+  applyFontSizeChange(2);
+});
+
+document.querySelector('[data-action="fontSize-down"]').addEventListener('mousedown', (e) => {
+  e.preventDefault();
+  applyFontSizeChange(-2);
+});
+
+document.getElementById('tb-font-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const size = parseInt(e.target.value);
+    if (size >= 8 && size <= 72) {
+      restoreSelection();
+      applyInlineStyle('fontSize', size + 'px');
+      debouncedSave();
+    }
+  }
+});
+
+function applyFontSizeChange(delta) {
+  const input = document.getElementById('tb-font-input');
+  let current = parseInt(input.value) || state.settings.fontSize;
+  current = Math.max(8, Math.min(72, current + delta));
+  input.value = current;
+  applyInlineStyle('fontSize', current + 'px');
+  debouncedSave();
+}
+
+function applyInlineStyle(prop, value) {
+  const sel = window.getSelection();
+  if (sel.rangeCount === 0 || sel.isCollapsed) return;
+  
+  const range = sel.getRangeAt(0);
+  const span = document.createElement('span');
+  span.style[prop] = value;
+  
+  try {
+    range.surroundContents(span);
+  } catch(e) {
+    // If selection crosses element boundaries, use execCommand fallback
+    const sizeMap = { '10px': 1, '13px': 2, '16px': 3, '18px': 4, '24px': 5, '32px': 6, '48px': 7 };
+    const closest = Object.keys(sizeMap).reduce((prev, curr) => {
+      return Math.abs(parseInt(curr) - parseInt(value)) < Math.abs(parseInt(prev) - parseInt(value)) ? curr : prev;
+    });
+    document.execCommand('fontSize', false, sizeMap[closest] || 3);
+  }
+}
+
+// Highlight
+document.querySelector('[data-action="highlight"]').addEventListener('mousedown', (e) => {
+  e.preventDefault();
+  const color = document.getElementById('tb-highlight-color').value;
+  document.execCommand('hiliteColor', false, color);
+  debouncedSave();
+});
+
+document.querySelector('[data-action="removeHighlight"]').addEventListener('mousedown', (e) => {
+  e.preventDefault();
+  document.execCommand('hiliteColor', false, 'transparent');
+  debouncedSave();
+});
+
+// Text color
+document.getElementById('tb-text-color').addEventListener('input', (e) => {
+  restoreSelection();
+  document.execCommand('foreColor', false, e.target.value);
+  debouncedSave();
+});
+
+document.getElementById('tb-text-color').addEventListener('mousedown', () => {
+  saveSelection();
+});
+
+document.getElementById('tb-highlight-color').addEventListener('mousedown', () => {
+  saveSelection();
+});
+
+// Selection events
+document.addEventListener('selectionchange', () => {
+  showToolbar();
+});
+
+$content.addEventListener('mouseup', () => {
+  setTimeout(showToolbar, 10);
+});
+
+document.addEventListener('mousedown', (e) => {
+  if (!$toolbar.contains(e.target) && !$content.contains(e.target)) {
+    $toolbar.classList.remove('visible');
+  }
+});
+
+/* ==============================================================
+   CONTENT EDITING
+   ============================================================== */
+
+$content.addEventListener('input', () => {
+  debouncedSave();
+});
+
+$content.addEventListener('paste', (e) => {
+  e.preventDefault();
+  const text = e.clipboardData.getData('text/plain');
+  document.execCommand('insertText', false, text);
+  debouncedSave();
+});
+
+/* ==============================================================
+   KEYBOARD SHORTCUTS
+   ============================================================== */
+
+document.addEventListener('keydown', (e) => {
+  // Don't trigger shortcuts when typing in inputs
+  const tag = e.target.tagName;
+  const isEditing = e.target.isContentEditable;
+  const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+  
+  // Escape always works (back button)
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    // Close any open panels first
+    if ($settingsPanel.classList.contains('open')) {
+      $settingsPanel.classList.remove('open');
+      return;
+    }
+    if ($managePanel.classList.contains('open')) {
+      $managePanel.classList.remove('open');
+      return;
+    }
+    if ($modalOverlay.classList.contains('visible')) {
+      $modalOverlay.classList.remove('visible');
+      return;
+    }
+    if ($deleteOverlay.classList.contains('visible')) {
+      $deleteOverlay.classList.remove('visible');
+      return;
+    }
+    goBack();
+    return;
+  }
+  
+  // Number shortcuts only when not actively editing text
+  if (!isInput && !isEditing) {
+    const num = parseInt(e.key);
+    if (num >= 1 && num <= 9 && num <= state.objections.length) {
+      e.preventDefault();
+      jumpToObjection(state.objections[num - 1].id);
+    }
+  }
+});
+
+/* ==============================================================
+   SETTINGS PANEL
+   ============================================ */
+
+document.getElementById('btn-settings').addEventListener('click', () => {
+  $settingsPanel.classList.toggle('open');
+  $managePanel.classList.remove('open');
+});
+
+document.getElementById('close-settings').addEventListener('click', () => {
+  $settingsPanel.classList.remove('open');
+});
+
+/* ==============================================================
+   MANAGE PANEL
+   ============================================ */
+
+document.getElementById('btn-manage').addEventListener('click', () => {
+  $managePanel.classList.toggle('open');
+  $settingsPanel.classList.remove('open');
+  renderManageList();
+});
+
+document.getElementById('close-manage').addEventListener('click', () => {
+  $managePanel.classList.remove('open');
+});
+
+function renderManageList() {
+  $manageList.innerHTML = '';
+  
+  state.objections.forEach((obj, i) => {
+    const item = document.createElement('div');
+    item.className = 'manage-item';
+    item.draggable = true;
+    item.dataset.index = i;
+    
+    item.innerHTML = `
+      <div class="color-dot" style="background:${obj.color}"></div>
+      <span class="item-name">${obj.emoji || ''} ${obj.label}</span>
+      <button title="Move up" data-action="up" ${i === 0 ? 'disabled style="opacity:0.3"' : ''}>↑</button>
+      <button title="Move down" data-action="down" ${i === state.objections.length - 1 ? 'disabled style="opacity:0.3"' : ''}>↓</button>
+      <button title="Edit" data-action="edit">✏</button>
+      <button title="Delete" data-action="delete" style="color:#ef4444">🗑</button>
+    `;
+    
+    // Button handlers
+    item.querySelector('[data-action="up"]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (i > 0) {
+        [state.objections[i - 1], state.objections[i]] = [state.objections[i], state.objections[i - 1]];
+        renderManageList();
+        renderNavButtons();
+        debouncedSave();
+      }
+    });
+    
+    item.querySelector('[data-action="down"]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (i < state.objections.length - 1) {
+        [state.objections[i], state.objections[i + 1]] = [state.objections[i + 1], state.objections[i]];
+        renderManageList();
+        renderNavButtons();
+        debouncedSave();
+      }
+    });
+    
+    item.querySelector('[data-action="edit"]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      openEditModal(obj.id);
+    });
+    
+    item.querySelector('[data-action="delete"]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      openDeleteModal(obj.id);
+    });
+    
+    $manageList.appendChild(item);
+  });
+}
+
+/* ==============================================================
+   ADD / EDIT MODAL
+   ============================================ */
+
+document.getElementById('btn-add-objection').addEventListener('click', () => {
+  editingObjectionId = null;
+  $modalTitle.textContent = 'Add New Objection';
+  $modalName.value = '';
+  $modalEmoji.value = '';
+  $modalColor.value = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+  $modalOverlay.classList.add('visible');
+  setTimeout(() => $modalName.focus(), 100);
+});
+
+function openEditModal(id) {
+  const obj = state.objections.find(o => o.id === id);
+  if (!obj) return;
+  
+  editingObjectionId = id;
+  $modalTitle.textContent = 'Edit Objection';
+  $modalName.value = obj.label;
+  $modalEmoji.value = obj.emoji || '';
+  $modalColor.value = obj.color;
+  $modalOverlay.classList.add('visible');
+  setTimeout(() => $modalName.focus(), 100);
+}
+
+document.getElementById('modal-cancel').addEventListener('click', () => {
+  $modalOverlay.classList.remove('visible');
+});
+
+$modalOverlay.addEventListener('click', (e) => {
+  if (e.target === $modalOverlay) $modalOverlay.classList.remove('visible');
+});
+
+document.getElementById('modal-save').addEventListener('click', () => {
+  const label = $modalName.value.trim();
+  if (!label) { $modalName.focus(); return; }
+  
+  const emoji = $modalEmoji.value.trim();
+  const color = $modalColor.value;
+  
+  if (editingObjectionId) {
+    // Edit existing
+    const obj = state.objections.find(o => o.id === editingObjectionId);
+    if (obj) {
+      obj.label = label;
+      obj.emoji = emoji;
+      obj.color = color;
+      
+      // Update the CSS variable for this objection
+      updateObjectionCSSColor(obj.id, color);
+    }
+  } else {
+    // Create new
+    const id = 'custom-' + Date.now();
+    state.objections.push({ id, label, emoji, color });
+    
+    // Create empty objection section in the script
+    const sectionHtml = `
+      <div class="script-line empty-line"><br></div>
+      <div class="script-line objection-section-header" data-objection="${id}" id="objection-${id}" style="border-left-color: ${color} !important; background: ${hexToLightBg(color)} !important;">
+        <b>${emoji ? emoji + ' ' : ''}${label}:</b>
+      </div>
+      <div class="script-line empty-line"><br></div>
+      <div class="script-line">[Type your objection response here]</div>
+      <div class="script-line empty-line"><br></div>
+    `;
+    
+    $content.innerHTML += sectionHtml;
+  }
+  
+  $modalOverlay.classList.remove('visible');
+  renderNavButtons();
+  renderManageList();
+  saveState();
+});
+
+function hexToLightBg(hex) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, 0.08)`;
+}
+
+function updateObjectionCSSColor(id, color) {
+  const els = document.querySelectorAll(`[data-objection="${id}"]`);
+  els.forEach(el => {
+    el.style.borderLeftColor = color;
+    el.style.background = hexToLightBg(color);
+  });
+}
+
+/* ==============================================================
+   DELETE MODAL
+   ============================================ */
+
+function openDeleteModal(id) {
+  const obj = state.objections.find(o => o.id === id);
+  if (!obj) return;
+  
+  deletingObjectionId = id;
+  $deleteMsg.textContent = `Are you sure you want to delete "${obj.emoji || ''} ${obj.label}"?`;
+  $deleteOverlay.classList.add('visible');
+}
+
+document.getElementById('delete-cancel').addEventListener('click', () => {
+  $deleteOverlay.classList.remove('visible');
+  deletingObjectionId = null;
+});
+
+$deleteOverlay.addEventListener('click', (e) => {
+  if (e.target === $deleteOverlay) {
+    $deleteOverlay.classList.remove('visible');
+    deletingObjectionId = null;
+  }
+});
+
+document.getElementById('delete-confirm').addEventListener('click', () => {
+  if (!deletingObjectionId) return;
+  
+  // Remove from state
+  state.objections = state.objections.filter(o => o.id !== deletingObjectionId);
+  
+  // Remove the section from the script
+  const section = document.getElementById('objection-' + deletingObjectionId);
+  if (section) {
+    section.remove();
+  }
+  
+  $deleteOverlay.classList.remove('visible');
+  deletingObjectionId = null;
+  renderNavButtons();
+  renderManageList();
+  saveState();
+});
+
+/* ==============================================================
+   EXPORT / IMPORT
+   ============================================ */
+
+document.getElementById('btn-export-json').addEventListener('click', () => {
+  const data = {
+    objections: state.objections,
+    settings: state.settings,
+    scriptContent: $content.innerHTML,
+    exportedAt: new Date().toISOString(),
+    version: 1,
+  };
+  
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `sales-script-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('btn-import-json').addEventListener('click', () => {
+  document.getElementById('import-file-input').click();
+});
+
+document.getElementById('import-file-input').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      const data = JSON.parse(event.target.result);
+      if (data.scriptContent) {
+        $content.innerHTML = data.scriptContent;
+      }
+      if (data.objections) state.objections = data.objections;
+      if (data.settings) Object.assign(state.settings, data.settings);
+      
+      applySettings();
+      renderNavButtons();
+      saveState();
+      alert('Import successful!');
+    } catch (err) {
+      alert('Import failed: Invalid JSON file');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (confirm('⚠ This will reset the script to the original content and clear all edits. Are you sure?')) {
+    if (confirm('This action CANNOT be undone. Last chance — are you absolutely sure?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      state.objections = JSON.parse(JSON.stringify(DEFAULT_OBJECTIONS));
+      state.settings = { fontSize: 17, lineHeight: 1.75, docWidth: 780 };
+      $content.innerHTML = DEFAULT_SCRIPT_CONTENT;
+      applySettings();
+      renderNavButtons();
+      saveState();
+    }
+  }
+});
+
+/* ==============================================================
+   INITIALIZE
+   ============================================ */
+
+async function init() {
+  await loadState();
+  renderNavButtons();
+  
+  // Recalculate scroll padding based on actual nav height
+  const updateScrollPadding = () => {
+    const navH = document.getElementById('nav-bar').offsetHeight;
+    document.documentElement.style.scrollPaddingTop = (navH + 16) + 'px';
+    document.getElementById('script-container').style.paddingTop = (navH + 20) + 'px';
+  };
+  
+  updateScrollPadding();
+  window.addEventListener('resize', updateScrollPadding);
+  
+  // Make sure content exists
+  if (!$content.innerHTML.trim()) {
+    $content.innerHTML = DEFAULT_SCRIPT_CONTENT;
+  }
+  
+  console.log('Sales Script App initialized.');
+}
+
+init();
+</script>
+</body>
+</html>
