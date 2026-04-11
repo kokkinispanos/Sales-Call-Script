@@ -33,6 +33,7 @@
   --obj-parents: #8b5cf6;
   --obj-time: #14b8a6;
   --obj-big: #f97316;
+  --btn-scale: 1;
 }
 
 *, *::before, *::after {
@@ -136,11 +137,11 @@ body {
 }
 
 .obj-btn {
-  padding: 5px 12px;
+  padding: calc(5px * var(--btn-scale)) calc(12px * var(--btn-scale));
   border: none;
-  border-radius: 6px;
+  border-radius: calc(6px * var(--btn-scale));
   font-family: var(--font-base);
-  font-size: 12.5px;
+  font-size: calc(12.5px * var(--btn-scale));
   font-weight: 600;
   color: white;
   cursor: pointer;
@@ -159,18 +160,18 @@ body {
 .obj-btn:active { transform: translateY(0); }
 
 .obj-btn .shortcut-hint {
-  font-size: 10px;
+  font-size: calc(10px * var(--btn-scale));
   opacity: 0.7;
-  margin-left: 4px;
+  margin-left: calc(4px * var(--btn-scale));
 }
 
 #back-btn {
-  padding: 5px 12px;
+  padding: calc(5px * var(--btn-scale)) calc(12px * var(--btn-scale));
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: calc(6px * var(--btn-scale));
   background: white;
   font-family: var(--font-base);
-  font-size: 12.5px;
+  font-size: calc(12.5px * var(--btn-scale));
   font-weight: 600;
   color: var(--color-text);
   cursor: pointer;
@@ -682,6 +683,11 @@ body {
     <label>Document Width: <span class="range-value" id="width-value">780px</span></label>
     <input type="range" id="width-range" min="500" max="1200" value="780" step="20">
   </div>
+  
+  <div class="setting-group">
+    <label>Button Size: <span class="range-value" id="btn-scale-value">1.0x</span></label>
+    <input type="range" id="btn-scale-range" min="0.6" max="2.0" value="1.0" step="0.05">
+  </div>
 
   <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e5e5;">
   
@@ -792,6 +798,7 @@ let state = {
     fontSize: 17,
     lineHeight: 1.75,
     docWidth: 780,
+    btnScale: 1.0,
   },
 };
 
@@ -913,6 +920,7 @@ function applySettings() {
   document.documentElement.style.setProperty('--font-size-base', state.settings.fontSize + 'px');
   document.documentElement.style.setProperty('--line-height', state.settings.lineHeight);
   document.documentElement.style.setProperty('--max-width', state.settings.docWidth + 'px');
+  document.documentElement.style.setProperty('--btn-scale', state.settings.btnScale || 1.0);
   
   document.getElementById('global-font-range').value = state.settings.fontSize;
   document.getElementById('global-font-value').textContent = state.settings.fontSize + 'px';
@@ -920,6 +928,12 @@ function applySettings() {
   document.getElementById('line-height-value').textContent = state.settings.lineHeight.toFixed(2);
   document.getElementById('width-range').value = state.settings.docWidth;
   document.getElementById('width-value').textContent = state.settings.docWidth + 'px';
+  
+  const scaleInput = document.getElementById('btn-scale-range');
+  if (scaleInput) {
+    scaleInput.value = state.settings.btnScale || 1.0;
+    document.getElementById('btn-scale-value').textContent = (state.settings.btnScale || 1.0).toFixed(2) + 'x';
+  }
 }
 
 document.getElementById('global-font-range').addEventListener('input', (e) => {
@@ -936,6 +950,12 @@ document.getElementById('line-height-range').addEventListener('input', (e) => {
 
 document.getElementById('width-range').addEventListener('input', (e) => {
   state.settings.docWidth = parseInt(e.target.value);
+  applySettings();
+  debouncedSave();
+});
+
+document.getElementById('btn-scale-range').addEventListener('input', (e) => {
+  state.settings.btnScale = parseFloat(e.target.value);
   applySettings();
   debouncedSave();
 });
@@ -1557,7 +1577,7 @@ document.getElementById('btn-reset').addEventListener('click', () => {
     if (confirm('This action CANNOT be undone. Last chance — are you absolutely sure?')) {
       localStorage.removeItem(STORAGE_KEY);
       state.objections = JSON.parse(JSON.stringify(DEFAULT_OBJECTIONS));
-      state.settings = { fontSize: 17, lineHeight: 1.75, docWidth: 780 };
+      state.settings = { fontSize: 17, lineHeight: 1.75, docWidth: 780, btnScale: 1.0 };
       $content.innerHTML = DEFAULT_SCRIPT_CONTENT;
       applySettings();
       renderNavButtons();
