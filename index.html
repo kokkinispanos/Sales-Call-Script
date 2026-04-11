@@ -134,6 +134,25 @@ body {
   flex-wrap: wrap;
   gap: 5px;
   align-items: center;
+  overflow: hidden;
+  max-height: 500px;
+  opacity: 1;
+  transition: max-height 0.3s ease, margin-top 0.3s ease, opacity 0.2s;
+}
+
+body.nav-collapsed #nav-buttons-row {
+  max-height: 0;
+  margin-top: -6px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#btn-toggle-nav {
+  transition: transform 0.3s ease;
+}
+
+body.nav-collapsed #btn-toggle-nav {
+  transform: rotate(180deg);
 }
 
 .obj-btn {
@@ -623,6 +642,7 @@ body {
     <span id="nav-title">📋 SALES SCRIPT</span>
     <div id="nav-controls">
       <span id="save-status" class="saved">Saved ✓</span>
+      <button class="nav-icon-btn" id="btn-toggle-nav" title="Toggle Nav Buttons">▲</button>
       <button class="nav-icon-btn" id="btn-manage" title="Manage Objection Buttons">⚙</button>
       <button class="nav-icon-btn" id="btn-settings" title="Settings & Export">☰</button>
     </div>
@@ -799,6 +819,7 @@ let state = {
     lineHeight: 1.75,
     docWidth: 780,
     btnScale: 1.0,
+    isNavCollapsed: false,
   },
 };
 
@@ -934,7 +955,19 @@ function applySettings() {
     scaleInput.value = state.settings.btnScale || 1.0;
     document.getElementById('btn-scale-value').textContent = (state.settings.btnScale || 1.0).toFixed(2) + 'x';
   }
+  
+  if (state.settings.isNavCollapsed) {
+    document.body.classList.add('nav-collapsed');
+  } else {
+    document.body.classList.remove('nav-collapsed');
+  }
 }
+
+document.getElementById('btn-toggle-nav').addEventListener('click', () => {
+  state.settings.isNavCollapsed = !state.settings.isNavCollapsed;
+  applySettings();
+  debouncedSave();
+});
 
 document.getElementById('global-font-range').addEventListener('input', (e) => {
   state.settings.fontSize = parseInt(e.target.value);
@@ -1269,6 +1302,13 @@ document.addEventListener('keydown', (e) => {
     const num = parseInt(e.key);
     if (num >= 1 && num <= 9 && num <= state.objections.length) {
       e.preventDefault();
+      
+      if (state.settings.isNavCollapsed) {
+        state.settings.isNavCollapsed = false;
+        applySettings();
+        debouncedSave();
+      }
+      
       jumpToObjection(state.objections[num - 1].id);
     }
   }
@@ -1577,7 +1617,7 @@ document.getElementById('btn-reset').addEventListener('click', () => {
     if (confirm('This action CANNOT be undone. Last chance — are you absolutely sure?')) {
       localStorage.removeItem(STORAGE_KEY);
       state.objections = JSON.parse(JSON.stringify(DEFAULT_OBJECTIONS));
-      state.settings = { fontSize: 17, lineHeight: 1.75, docWidth: 780, btnScale: 1.0 };
+      state.settings = { fontSize: 17, lineHeight: 1.75, docWidth: 780, btnScale: 1.0, isNavCollapsed: false };
       $content.innerHTML = DEFAULT_SCRIPT_CONTENT;
       applySettings();
       renderNavButtons();
@@ -1603,6 +1643,8 @@ async function init() {
   
   updateScrollPadding();
   window.addEventListener('resize', updateScrollPadding);
+  
+  new ResizeObserver(updateScrollPadding).observe(document.getElementById('nav-bar'));
   
   // Make sure content exists
   if (!$content.innerHTML.trim()) {
