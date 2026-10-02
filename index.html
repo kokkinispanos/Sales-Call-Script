@@ -616,6 +616,228 @@ body.nav-collapsed #btn-toggle-nav {
 }
 
 /* ============================================
+   LIVE CALL: KEY BADGES, FORK BAR, CLOCK
+   ============================================ */
+.obj-btn .key-badge {
+  display: inline-block;
+  min-width: 1.45em;
+  padding: 0 0.3em;
+  margin-right: 0.4em;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.32);
+  color: white;
+  font-size: 0.85em;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.obj-btn.is-current {
+  outline: 3px solid #1a1a1a;
+  outline-offset: 1px;
+}
+
+#script-container { position: relative; }
+
+#rt-layer {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.rt-dim {
+  position: absolute;
+  background: rgba(255,255,255,0.68);
+  border-radius: 4px;
+}
+
+.rt-branch {
+  position: absolute;
+  width: 6px;
+  border-radius: 3px;
+  opacity: 0.85;
+}
+
+.rt-flash {
+  position: absolute;
+  border-radius: 6px;
+  background: rgba(255, 200, 0, 0.38);
+  animation: rt-flash 1.1s ease-out forwards;
+}
+
+@keyframes rt-flash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+#fork-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: none;
+  max-height: 45vh;
+  overflow-y: auto;
+  padding: 8px 12px 10px;
+  background: #ffffff;
+  border-top: 4px solid var(--fork-color, #999);
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+}
+
+#fork-bar.visible { display: block; }
+
+#fork-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+.fork-crumb {
+  border: none;
+  background: none;
+  font-family: var(--font-base);
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.fork-crumb:hover { background: #f0f0f0; }
+.fork-crumb.current { color: #1a1a1a; background: #efefef; font-weight: 800; }
+.fork-sep { color: #bbb; }
+
+#fork-help {
+  margin-left: auto;
+  font-size: 11px;
+  color: #aaa;
+  white-space: nowrap;
+}
+
+#fork-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fork-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 220px;
+  max-width: 100%;
+  padding: 8px 10px;
+  border: 2px solid var(--fork-color, #999);
+  border-radius: 8px;
+  background: white;
+  font-family: var(--font-base);
+  font-size: calc(13px * var(--btn-scale));
+  line-height: 1.25;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.1s;
+}
+
+.fork-opt:hover { background: #fafafa; transform: translateY(-1px); }
+
+.fork-opt .fo-key {
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: white;
+  font-size: 0.75em;
+  font-weight: 700;
+}
+
+.fork-opt .fo-name { flex-shrink: 0; font-weight: 800; }
+.fork-opt .fo-label { font-weight: 500; }
+
+.fork-opt.ref {
+  flex: 0 1 auto;
+  border-color: transparent;
+  color: white;
+  font-weight: 700;
+}
+
+.fork-opt.ref .fo-key { background: rgba(0,0,0,0.32); }
+
+.fork-end {
+  align-self: center;
+  font-size: 13px;
+  color: #999;
+}
+
+#call-clock {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+}
+
+#clock-btn {
+  padding: 2px 7px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: white;
+  font-family: var(--font-base);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #555;
+  cursor: pointer;
+}
+
+#call-clock.warn #clock-btn { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+#call-clock.late #clock-btn { background: #fee2e2; border-color: #fca5a5; color: #b91c1c; }
+#call-clock.done #clock-btn { background: #dcfce7; border-color: #86efac; color: #166534; }
+
+#price-check {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  user-select: none;
+}
+
+#price-check input { cursor: pointer; margin: 0; }
+
+#clock-reset {
+  display: none;
+  border: none;
+  background: none;
+  font-size: 13px;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+#call-clock.paused #clock-reset { display: inline; }
+
+#typing-pill {
+  display: none;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: #fff7ed;
+  color: #c2410c;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+body.is-typing #typing-pill { display: inline; }
+
+/* ============================================
    RESPONSIVE
    ============================================ */
 @media (max-width: 640px) {
@@ -641,6 +863,12 @@ body.nav-collapsed #btn-toggle-nav {
   <div id="nav-top-row">
     <span id="nav-title">📋 SALES SCRIPT</span>
     <div id="nav-controls">
+      <span id="typing-pill" title="Your cursor is in the script, so keys type text. Press Esc to use the shortcuts again.">✏️ typing · Esc</span>
+      <span id="call-clock" class="paused">
+        <button id="clock-btn" title="Call timer: click to start / pause">⏱ 0:00</button>
+        <button id="clock-reset" title="Reset the timer">↺</button>
+        <label id="price-check" title="Tick when you have said the price"><input type="checkbox" id="price-box"><span id="price-text">price by 45'</span></label>
+      </span>
       <span id="save-status" class="saved">Saved ✓</span>
       <button class="nav-icon-btn" id="btn-toggle-nav" title="Toggle Nav Buttons">▲</button>
       <button class="nav-icon-btn" id="btn-manage" title="Manage Objection Buttons">⚙</button>
@@ -660,6 +888,16 @@ body.nav-collapsed #btn-toggle-nav {
   <div id="script-content" contenteditable="true" spellcheck="false">
     <!-- Content loaded by JS -->
   </div>
+  <!-- Live-call overlay (dims other branches). Lives outside #script-content so it is never saved. -->
+  <div id="rt-layer"></div>
+</div>
+
+<!-- ============================================
+     FORK BAR (the "if they say..." choices)
+     ============================================ -->
+<div id="fork-bar">
+  <div id="fork-crumbs"></div>
+  <div id="fork-options"></div>
 </div>
 
 <!-- ============================================
@@ -846,6 +1084,11 @@ const $modalEmoji = document.getElementById('modal-emoji');
 const $modalColor = document.getElementById('modal-color');
 const $deleteOverlay = document.getElementById('delete-overlay');
 const $deleteMsg = document.getElementById('delete-msg');
+const $container = document.getElementById('script-container');
+const $rtLayer = document.getElementById('rt-layer');
+const $forkBar = document.getElementById('fork-bar');
+const $forkCrumbs = document.getElementById('fork-crumbs');
+const $forkOptions = document.getElementById('fork-options');
 
 /* ==============================================================
    LOAD / SAVE
@@ -1007,53 +1250,500 @@ function renderNavButtons() {
     btn.className = 'obj-btn';
     btn.style.backgroundColor = obj.color;
     btn.dataset.objectionId = obj.id;
-    btn.innerHTML = `${obj.emoji || ''} ${obj.label}<span class="shortcut-hint">[${i + 1}]</span>`;
+    btn.innerHTML = `<span class="key-badge">${i + 1}</span>${obj.emoji || ''} ${obj.label}`;
     btn.title = `Jump to "${obj.label}" (Key: ${i + 1})`;
-    btn.addEventListener('click', () => jumpToObjection(obj.id));
+    btn.addEventListener('click', () => { jumpToObjection(obj.id); btn.blur(); });
     $navButtonsRow.insertBefore(btn, $backBtn);
   });
+
+  rebuildForks();
 }
 
 /* ==============================================================
    SCROLL / JUMP LOGIC
    ============================================================== */
 
-function jumpToObjection(id) {
-  // Save current scroll position
-  state.scrollHistory.push(window.scrollY);
-  $backBtn.classList.add('active');
-  
+function jumpToObjection(id, opts = {}) {
   // Find the target element
   const target = document.getElementById('objection-' + id);
   if (!target) {
     console.warn('Objection section not found:', id);
     return;
   }
-  
-  // Scroll to it
+
+  scrollToElement(target, opts);
+}
+
+// Instant jump (no smooth scrolling: every second counts on a call)
+function scrollToElement(target, { pushHistory = true } = {}) {
+  if (pushHistory) {
+    state.scrollHistory.push(window.scrollY);
+    $backBtn.classList.add('active');
+  }
+
   const navHeight = document.getElementById('nav-bar').offsetHeight;
-  const targetTop = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
-  
-  window.scrollTo({ top: targetTop, behavior: 'smooth' });
-  
-  // Flash highlight
-  target.classList.remove('flash-highlight');
-  void target.offsetWidth; // force reflow
-  target.classList.add('flash-highlight');
-  
-  setTimeout(() => target.classList.remove('flash-highlight'), 1500);
+  const targetTop = target.getBoundingClientRect().top + window.scrollY - navHeight - 12;
+
+  window.scrollTo({ top: targetTop, behavior: 'instant' });
+
+  leaveTextFocus();
+  flashElement(target);
+  refreshForksNow();
 }
 
 function goBack() {
   if (state.scrollHistory.length === 0) return;
-  
+
   const pos = state.scrollHistory.pop();
-  window.scrollTo({ top: pos, behavior: 'smooth' });
-  
+  window.scrollTo({ top: pos, behavior: 'instant' });
+  refreshForksNow();
+
   if (state.scrollHistory.length === 0) {
     $backBtn.classList.remove('active');
   }
 }
+
+// Take the cursor out of the script so number/letter keys work as shortcuts
+function leaveTextFocus() {
+  const active = document.activeElement;
+  if (active && (active === $content || $content.contains(active))) {
+    active.blur();
+    window.getSelection().removeAllRanges();
+  }
+}
+
+// Yellow flash drawn on the overlay (never touches the script itself)
+function flashElement(el) {
+  const line = forkLineOf(el) || el;
+  const cRect = $container.getBoundingClientRect();
+  const r = line.getBoundingClientRect();
+  const contentRect = $content.getBoundingClientRect();
+  const flash = document.createElement('div');
+  flash.className = 'rt-flash';
+  flash.style.top = (r.top - cRect.top - 4) + 'px';
+  flash.style.height = (r.height + 8) + 'px';
+  flash.style.left = (contentRect.left - cRect.left - 8) + 'px';
+  flash.style.width = (contentRect.width + 16) + 'px';
+  $rtLayer.appendChild(flash);
+  setTimeout(() => flash.remove(), 1200);
+}
+
+/* ==============================================================
+   LIVE CALL: FORKS  ("A ➡️", "B ➡️", "A.1 ➡️", "B.2 ➡️" ...)
+   Reads the scenario markers already written in the script.
+   It never writes to the script: everything it draws lives
+   outside #script-content, so it is never saved.
+   ============================================================== */
+
+const MARKER_RE = /^[\s ]*([A-Z](?:\.\d+)*)[\s ]*➡️?/;
+const OPTION_KEYS = ['q', 'w', 'e', 'r', 't'];
+const READING_OFFSET = 60; // px below the nav bar that counts as "where I'm reading"
+
+let forkLines = [];        // every text line of the script, in order
+let forkSections = [];     // one per objection button found in the script
+let forkCurrent = { section: null, node: null };
+let forkOptionTargets = []; // what Q / W / E / R / T jump to right now
+let forkRaf = null;
+let forkForce = false;
+let forkRebuildTimer = null;
+
+function escapeRegex(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function isLightColor(hex) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex || '');
+  if (!m) return false;
+  const n = parseInt(m[1], 16);
+  const r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  return (0.299 * r + 0.587 * g + 0.114 * b) > 170;
+}
+
+function cleanText(t) {
+  return (t || '').replace(/[\s ]+/g, ' ').trim();
+}
+
+// "Get The Money Button", "BAMFAM Button" ... written inside the script
+const refRegexCache = new Map();
+function refRegex(obj) {
+  const label = cleanText(obj.label);
+  if (!refRegexCache.has(label)) {
+    const words = label.split(' ').map(escapeRegex).join('[\\s\\u00a0]*');
+    refRegexCache.set(label, new RegExp(words + '[\\s\\u00a0]*button', 'i'));
+  }
+  return refRegexCache.get(label);
+}
+
+function forkLineOf(el) {
+  if (!el) return null;
+  return forkLines.find(l => l === el || l.contains(el)) || null;
+}
+
+function rebuildForks() {
+  const blockSel = 'div,p,h1,h2,h3,h4,h5,h6,li';
+  forkLines = Array.from($content.querySelectorAll(blockSel)).filter(el => !el.querySelector(blockSel));
+
+  // Sections: one per objection button whose anchor exists in the script
+  const sections = [];
+  state.objections.forEach((obj, idx) => {
+    const el = document.getElementById('objection-' + obj.id);
+    if (!el || !$content.contains(el)) return;
+    let start = forkLines.findIndex(l => l === el || l.contains(el));
+    if (start === -1) start = forkLines.findIndex(l => el.contains(l));
+    if (start === -1) return;
+    sections.push({ obj, idx, el, start, end: forkLines.length, nodes: [], top: [], headRefs: [] });
+  });
+  sections.sort((a, b) => a.start - b.start);
+  sections.forEach((s, i) => { s.end = i + 1 < sections.length ? sections[i + 1].start : forkLines.length; });
+
+  // Buttons mentioned on each line ("→ 💸Get The Money Button")
+  const lineRefs = forkLines.map(line => {
+    const text = cleanText(line.textContent);
+    if (!/button/i.test(text)) return [];
+    return state.objections.filter(obj => refRegex(obj).test(text));
+  });
+
+  const refsBetween = (from, to, sec) => {
+    const out = [];
+    for (let i = from; i < to; i++) {
+      lineRefs[i].forEach(obj => { if (obj !== sec.obj && !out.includes(obj)) out.push(obj); });
+    }
+    return out;
+  };
+
+  // Scenario markers inside each section
+  sections.forEach(sec => {
+    for (let i = sec.start; i < sec.end; i++) {
+      const text = forkLines[i].textContent;
+      const m = text.match(MARKER_RE);
+      if (!m) continue;
+      let label = cleanText(text.slice(m[0].length));
+      // Marker alone on its line: use the next line with text as the label
+      for (let j = i + 1; !label && j < Math.min(i + 4, sec.end); j++) {
+        if (MARKER_RE.test(forkLines[j].textContent)) break;
+        label = cleanText(forkLines[j].textContent);
+      }
+      sec.nodes.push({ name: m[1], label, el: forkLines[i], line: i, level: m[1].split('.').length, parent: null, children: [], section: sec });
+    }
+
+    sec.nodes.forEach((n, k) => {
+      // Parent = closest earlier marker whose name is this name minus its last part (A.2.1 → A.2)
+      const parentName = n.name.split('.').slice(0, -1).join('.');
+      if (parentName) {
+        for (let p = k - 1; p >= 0; p--) {
+          if (sec.nodes[p].name === parentName) { n.parent = sec.nodes[p]; break; }
+        }
+      }
+      if (n.parent) n.parent.children.push(n); else sec.top.push(n);
+
+      // Where this branch stops: the next marker at the same or a higher level
+      const next = sec.nodes.slice(k + 1).find(o => o.level <= n.level);
+      n.subEnd = next ? next.line : sec.end;
+      const nextAny = sec.nodes[k + 1];
+      n.ownEnd = nextAny ? nextAny.line : sec.end;
+      n.refs = refsBetween(n.line, n.ownEnd, sec);
+    });
+
+    sec.headRefs = refsBetween(sec.start, sec.nodes.length ? sec.nodes[0].line : sec.end, sec);
+  });
+
+  forkSections = sections;
+  refreshForksNow();
+}
+
+function scheduleForkRebuild() {
+  clearTimeout(forkRebuildTimer);
+  forkRebuildTimer = setTimeout(rebuildForks, 400);
+}
+
+function scheduleForkUpdate(force) {
+  if (force) forkForce = true;
+  if (forkRaf) return;
+  forkRaf = requestAnimationFrame(() => {
+    forkRaf = null;
+    updateForks();
+  });
+}
+
+// Redraw right away (used after a jump, so the bar never lags behind)
+function refreshForksNow() {
+  forkForce = true;
+  updateForks();
+}
+
+function computeForkCurrent() {
+  const y = document.getElementById('nav-bar').getBoundingClientRect().bottom + READING_OFFSET;
+  let section = null;
+  for (const s of forkSections) {
+    if (s.el.getBoundingClientRect().top <= y) section = s; else break;
+  }
+  let node = null;
+  if (section) {
+    for (const n of section.nodes) {
+      if (n.el.getBoundingClientRect().top <= y) node = n; else break;
+    }
+  }
+  return { section, node };
+}
+
+function updateForks() {
+  const cur = computeForkCurrent();
+  if (!forkForce && cur.section === forkCurrent.section && cur.node === forkCurrent.node) return;
+  forkForce = false;
+  forkCurrent = cur;
+  renderForkBar();
+  renderForkOverlay();
+
+  const currentId = cur.section ? cur.section.obj.id : null;
+  $navButtonsRow.querySelectorAll('.obj-btn').forEach(b => {
+    b.classList.toggle('is-current', b.dataset.objectionId === currentId);
+  });
+}
+
+function jumpToNode(node) {
+  scrollToElement(node.el);
+}
+
+function makeChip({ key, name, label, className, color, onClick }) {
+  const btn = document.createElement('button');
+  btn.className = 'fork-opt' + (className ? ' ' + className : '');
+  if (color) {
+    btn.style.background = color;
+    if (isLightColor(color)) btn.style.color = '#1a1a1a';
+  }
+  btn.innerHTML = (key ? `<span class="fo-key"></span>` : '') + (name ? `<span class="fo-name"></span>` : '') + `<span class="fo-label"></span>`;
+  if (key) btn.querySelector('.fo-key').textContent = key;
+  if (name) btn.querySelector('.fo-name').textContent = name;
+  btn.querySelector('.fo-label').textContent = label;
+  btn.addEventListener('click', () => { onClick(); btn.blur(); });
+  return btn;
+}
+
+function renderForkBar() {
+  const { section: sec, node } = forkCurrent;
+  forkOptionTargets = [];
+  $forkCrumbs.innerHTML = '';
+  $forkOptions.innerHTML = '';
+
+  const refs = sec ? (node ? node.refs : sec.headRefs) : [];
+  if (!sec || (!sec.nodes.length && !refs.length)) {
+    $forkBar.classList.remove('visible');
+    updateBottomSpace();
+    return;
+  }
+
+  $forkBar.style.setProperty('--fork-color', sec.obj.color);
+
+  // Breadcrumb: Objection › A › A.2  (each one clickable)
+  const path = [];
+  for (let n = node; n; n = n.parent) path.unshift(n);
+
+  const secCrumb = document.createElement('button');
+  secCrumb.className = 'fork-crumb' + (node ? '' : ' current');
+  secCrumb.textContent = `${sec.obj.emoji || ''} ${sec.obj.label}`;
+  secCrumb.title = 'Back to the start of this objection';
+  secCrumb.addEventListener('click', () => { jumpToObjection(sec.obj.id); secCrumb.blur(); });
+  $forkCrumbs.appendChild(secCrumb);
+
+  path.forEach(n => {
+    const sep = document.createElement('span');
+    sep.className = 'fork-sep';
+    sep.textContent = '›';
+    $forkCrumbs.appendChild(sep);
+    const c = document.createElement('button');
+    c.className = 'fork-crumb' + (n === node ? ' current' : '');
+    c.textContent = n.name;
+    c.title = n.label;
+    c.addEventListener('click', () => { jumpToNode(n); c.blur(); });
+    $forkCrumbs.appendChild(c);
+  });
+
+  const help = document.createElement('span');
+  help.id = 'fork-help';
+  help.textContent = 'Esc = back';
+  $forkCrumbs.appendChild(help);
+
+  // Choices: the answers that can come next
+  const choices = node ? node.children : sec.top;
+  choices.forEach((c, i) => {
+    const key = OPTION_KEYS[i] ? OPTION_KEYS[i].toUpperCase() : '';
+    if (OPTION_KEYS[i]) forkOptionTargets.push(c);
+    $forkOptions.appendChild(makeChip({
+      key,
+      name: c.name,
+      label: c.label || '',
+      onClick: () => jumpToNode(c),
+    }));
+  });
+
+  // Buttons this part of the script sends you to ("→ Get The Money Button")
+  refs.forEach(obj => {
+    const idx = state.objections.indexOf(obj);
+    $forkOptions.appendChild(makeChip({
+      key: idx >= 0 ? String(idx + 1) : '',
+      label: `→ ${obj.emoji || ''} ${obj.label}`,
+      className: 'ref',
+      color: obj.color,
+      onClick: () => jumpToObjection(obj.id),
+    }));
+  });
+
+  if (node && !choices.length) {
+    const end = document.createElement('span');
+    end.className = 'fork-end';
+    end.textContent = refs.length ? '' : `End of ${node.name}: no more forks here`;
+    if (end.textContent) $forkOptions.appendChild(end);
+  }
+
+  $forkBar.classList.add('visible');
+  updateBottomSpace();
+}
+
+// Keep the end of the script reachable above the fork bar
+function updateBottomSpace() {
+  const barH = $forkBar.classList.contains('visible') ? $forkBar.offsetHeight : 0;
+  $container.style.paddingBottom = Math.max(120, barH + 40, window.innerHeight * 0.6) + 'px';
+}
+
+// Fade the branches you did NOT choose, and mark the one you are in
+function renderForkOverlay() {
+  $rtLayer.querySelectorAll('.rt-dim, .rt-branch').forEach(el => el.remove());
+  const { section: sec, node } = forkCurrent;
+  if (!sec || !node) return;
+
+  const cRect = $container.getBoundingClientRect();
+  const contentRect = $content.getBoundingClientRect();
+  const left = contentRect.left - cRect.left - 8;
+  const width = contentRect.width + 16;
+  const yOf = (lineIdx) => lineIdx < forkLines.length
+    ? forkLines[lineIdx].getBoundingClientRect().top - cRect.top
+    : contentRect.bottom - cRect.top;
+
+  const addBox = (cls, from, to, extra) => {
+    const top = yOf(from);
+    const height = yOf(to) - top;
+    if (height <= 0) return;
+    const box = document.createElement('div');
+    box.className = cls;
+    box.style.top = top + 'px';
+    box.style.height = height + 'px';
+    Object.assign(box.style, extra);
+    $rtLayer.appendChild(box);
+  };
+
+  for (let p = node; p; p = p.parent) {
+    const siblings = p.parent ? p.parent.children : sec.top;
+    siblings.forEach(s => {
+      if (s !== p) addBox('rt-dim', s.line, s.subEnd, { left: left + 'px', width: width + 'px' });
+    });
+  }
+
+  addBox('rt-branch', node.line, node.subEnd, { left: (left - 6) + 'px', background: sec.obj.color });
+}
+
+/* --- Clicking "→ Get The Money Button" inside the script jumps there --- */
+
+function findRefTarget(el) {
+  for (let n = el; n && n !== $content; n = n.parentElement) {
+    if (n.nodeType !== 1) continue;
+    const text = cleanText(n.textContent);
+    if (!/button/i.test(text)) continue;
+    const hit = state.objections.find(obj => refRegex(obj).test(text) && text.length <= cleanText(obj.label).length + 25);
+    if (hit) return hit;
+  }
+  return null;
+}
+
+$content.addEventListener('click', (e) => {
+  const sel = window.getSelection();
+  if (sel && !sel.isCollapsed) return; // you were selecting text, not clicking
+  const hit = findRefTarget(e.target);
+  if (!hit) return;
+  e.preventDefault();
+  jumpToObjection(hit.id);
+});
+
+$content.addEventListener('mouseover', (e) => {
+  $content.style.cursor = findRefTarget(e.target) ? 'pointer' : '';
+});
+
+$content.addEventListener('focusin', () => document.body.classList.add('is-typing'));
+$content.addEventListener('focusout', () => document.body.classList.remove('is-typing'));
+
+window.addEventListener('scroll', () => scheduleForkUpdate(false), { passive: true });
+window.addEventListener('resize', () => { updateBottomSpace(); scheduleForkUpdate(true); });
+new ResizeObserver(() => scheduleForkUpdate(true)).observe($content);
+
+/* ==============================================================
+   CALL CLOCK  (only stored in this browser, never in the script)
+   ============================================================== */
+
+const CLOCK_KEY = 'sales-script-call-clock';
+const PRICE_TARGET_MIN = 45;
+const PRICE_WARN_MIN = 40;
+let clock = { startedAt: null, elapsed: 0, priceAt: null };
+
+try {
+  const raw = localStorage.getItem(CLOCK_KEY);
+  if (raw) Object.assign(clock, JSON.parse(raw));
+} catch (e) { /* storage blocked: the clock still works for this page */ }
+
+function saveClock() {
+  try { localStorage.setItem(CLOCK_KEY, JSON.stringify(clock)); } catch (e) {}
+}
+
+function clockMs() {
+  return clock.elapsed + (clock.startedAt ? Date.now() - clock.startedAt : 0);
+}
+
+function fmtClock(ms) {
+  const s = Math.floor(ms / 1000);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
+function renderClock() {
+  const ms = clockMs();
+  const min = ms / 60000;
+  const $clock = document.getElementById('call-clock');
+  document.getElementById('clock-btn').textContent = '⏱ ' + fmtClock(ms);
+  document.getElementById('price-box').checked = clock.priceAt !== null;
+  document.getElementById('price-text').textContent = clock.priceAt !== null
+    ? `price ✓ ${fmtClock(clock.priceAt)}`
+    : `price by ${PRICE_TARGET_MIN}'`;
+  $clock.classList.toggle('paused', !clock.startedAt && ms > 0);
+  $clock.classList.toggle('done', clock.priceAt !== null);
+  $clock.classList.toggle('late', clock.priceAt === null && min >= PRICE_TARGET_MIN);
+  $clock.classList.toggle('warn', clock.priceAt === null && min >= PRICE_WARN_MIN && min < PRICE_TARGET_MIN);
+}
+
+document.getElementById('clock-btn').addEventListener('click', (e) => {
+  if (clock.startedAt) {
+    clock.elapsed += Date.now() - clock.startedAt;
+    clock.startedAt = null;
+  } else {
+    clock.startedAt = Date.now();
+  }
+  saveClock();
+  renderClock();
+  e.currentTarget.blur();
+});
+
+document.getElementById('clock-reset').addEventListener('click', (e) => {
+  clock = { startedAt: null, elapsed: 0, priceAt: null };
+  saveClock();
+  renderClock();
+  e.currentTarget.blur();
+});
+
+document.getElementById('price-box').addEventListener('change', (e) => {
+  clock.priceAt = e.target.checked ? clockMs() : null;
+  saveClock();
+  renderClock();
+  e.target.blur();
+});
+
+setInterval(renderClock, 1000);
+renderClock();
 
 $backBtn.addEventListener('click', goBack);
 
@@ -1254,6 +1944,7 @@ document.addEventListener('mousedown', (e) => {
 
 $content.addEventListener('input', () => {
   debouncedSave();
+  scheduleForkRebuild();
 });
 
 $content.addEventListener('paste', (e) => {
@@ -1293,26 +1984,78 @@ document.addEventListener('keydown', (e) => {
       $deleteOverlay.classList.remove('visible');
       return;
     }
+    // Cursor in the script: first Esc just leaves the text so the shortcuts work
+    if (isEditing) {
+      leaveTextFocus();
+      return;
+    }
     goBack();
     return;
   }
-  
-  // Number shortcuts only when not actively editing text
-  if (!isInput && !isEditing) {
-    const num = parseInt(e.key);
-    if (num >= 1 && num <= 9 && num <= state.objections.length) {
+
+  // Shortcuts only when not actively editing text
+  if (isInput || isEditing) return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+  // Numbers = objection buttons. 1..9 jump at once; 10+ = type both digits quickly (1 then 2 = 12)
+  if (/^[0-9]$/.test(e.key)) {
+    e.preventDefault();
+    handleDigit(parseInt(e.key));
+    return;
+  }
+
+  // Q W E R T = the choices on the fork bar, left to right
+  const k = e.key.toLowerCase();
+  const optIdx = OPTION_KEYS.indexOf(k);
+  if (optIdx !== -1 && forkOptionTargets[optIdx]) {
+    e.preventDefault();
+    jumpToNode(forkOptionTargets[optIdx]);
+    return;
+  }
+
+  // A / B / C = jump straight to scenario A / B / C of the objection you're in
+  if (/^[a-z]$/.test(k) && forkCurrent.section) {
+    const top = forkCurrent.section.top.find(n => n.name === k.toUpperCase());
+    if (top) {
       e.preventDefault();
-      
-      if (state.settings.isNavCollapsed) {
-        state.settings.isNavCollapsed = false;
-        applySettings();
-        debouncedSave();
-      }
-      
-      jumpToObjection(state.objections[num - 1].id);
+      jumpToNode(top);
     }
   }
 });
+
+let pendingDigit = null;
+let pendingDigitTimer = null;
+const DIGIT_COMBO_MS = 800;
+
+function handleDigit(d) {
+  const count = state.objections.length;
+
+  if (pendingDigit !== null) {
+    const combo = pendingDigit * 10 + d;
+    clearTimeout(pendingDigitTimer);
+    pendingDigit = null;
+    if (combo >= 1 && combo <= count) {
+      // Replace the single-digit jump that just happened, so Esc doesn't stop there
+      jumpToObjection(state.objections[combo - 1].id, { pushHistory: false });
+      return;
+    }
+  }
+
+  if (d < 1 || d > count) return;
+
+  if (state.settings.isNavCollapsed) {
+    state.settings.isNavCollapsed = false;
+    applySettings();
+    debouncedSave();
+  }
+
+  jumpToObjection(state.objections[d - 1].id);
+
+  if (d * 10 <= count) {
+    pendingDigit = d;
+    pendingDigitTimer = setTimeout(() => { pendingDigit = null; }, DIGIT_COMBO_MS);
+  }
+}
 
 /* ==============================================================
    SETTINGS PANEL
